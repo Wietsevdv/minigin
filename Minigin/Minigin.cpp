@@ -5,9 +5,10 @@
 #include "SceneManager.h"
 #include "Renderer.h"
 #include "ResourceManager.h"
-#include "TextObject.h"
 #include "GameObject.h"
 #include "Scene.h"
+
+//components are in gameObject.h
 
 using namespace std;
 
@@ -55,20 +56,35 @@ void dae::Minigin::Initialize()
 void dae::Minigin::LoadGame() const
 {
 	auto& scene = SceneManager::GetInstance().CreateScene("Demo");
-
+	
 	auto go = std::make_shared<GameObject>();
-	go->SetTexture("background.jpg");
+	go->AddComponent<TextureComponent>();
+	go->GetComponent<TextureComponent>()->SetTexture("background.jpg");
+	go->AddComponent<RenderComponent>();
 	scene.Add(go);
 
 	go = std::make_shared<GameObject>();
-	go->SetTexture("logo.png");
-	go->SetPosition(216, 180);
+	go->AddComponent<TextureComponent>();
+	go->GetComponent<TextureComponent>()->SetTexture("logo.png");
+	go->GetComponent<TextureComponent>()->SetPosition(216, 180);
+	go->AddComponent<RenderComponent>();
 	scene.Add(go);
 
 	auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 36);
-	auto to = std::make_shared<TextObject>("Programming 4 Assignment", font);
-	to->SetPosition(80, 20);
-	scene.Add(to);
+	go = std::make_shared<GameObject>();
+	go->AddComponent<TextComponent>("Programming 4 Assignment", font);
+	go->GetComponent<TextComponent>()->SetPosition(80, 20);
+	go->AddComponent<RenderComponent>();
+	scene.Add(go);
+
+	auto font2 = ResourceManager::GetInstance().LoadFont("Lingua.otf", 18);
+	go = std::make_shared<GameObject>();
+	go->AddComponent<FpsComponent>();
+	go->AddComponent<TextComponent>("60 FPS", font2);
+	go->GetComponent<TextComponent>()->SetPosition(10, 10);
+	go->GetComponent<TextComponent>()->SetColor(255, 255, 0);
+	go->AddComponent<RenderComponent>();
+	scene.Add(go);
 }
 
 void dae::Minigin::Cleanup()
@@ -93,12 +109,16 @@ void dae::Minigin::Run()
 		auto& sceneManager = SceneManager::GetInstance();
 		auto& input = InputManager::GetInstance();
 
-		// todo: this update loop could use some work.
 		bool doContinue = true;
+		auto lastTime = std::chrono::high_resolution_clock::now();
 		while (doContinue)
 		{
+			const auto currentTime = std::chrono::high_resolution_clock::now();
+			float deltaTime = std::chrono::duration<float>(currentTime - lastTime).count();
+			lastTime = currentTime;
+
 			doContinue = input.ProcessInput();
-			sceneManager.Update();
+			sceneManager.Update(deltaTime);
 			renderer.Render();
 		}
 	}
