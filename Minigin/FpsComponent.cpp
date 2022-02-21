@@ -10,7 +10,7 @@ void dae::FpsComponent::Update(float deltaTime)
 	++m_Frames;
 	m_TimePassed += deltaTime;
 
-	if (m_TimePassed > 0.05f && m_Frames > 5) // the two magical nr here are used to slow down "showing" of the fps. Otherwise it would change constantly making it unreadable
+	if (m_TimePassed > 0.05f) // calculate fps every 0.05 seconds. otherwise -> constant changing -> unreadable
 	{
 		m_Fps = m_Frames / m_TimePassed;
 		m_TimePassed = 0;

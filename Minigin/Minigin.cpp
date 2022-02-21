@@ -57,34 +57,57 @@ void dae::Minigin::LoadGame() const
 {
 	auto& scene = SceneManager::GetInstance().CreateScene("Demo");
 	
+	//********** BACKGROUND
 	auto go = std::make_shared<GameObject>();
-	go->AddComponent<TextureComponent>();
-	go->GetComponent<TextureComponent>()->SetTexture("background.jpg");
-	go->AddComponent<RenderComponent>();
-	scene.Add(go);
 
+	go->AddComponent<TextureComponent>()->SetTexture("background.jpg"); // add and instantly set texture
+	go->AddComponent<RenderComponent>();
+
+	scene.Add(go);
+	//**********
+	
+
+	//********** LOGO
 	go = std::make_shared<GameObject>();
-	go->AddComponent<TextureComponent>();
-	go->GetComponent<TextureComponent>()->SetTexture("logo.png");
-	go->GetComponent<TextureComponent>()->SetPosition(216, 180);
-	go->AddComponent<RenderComponent>();
-	scene.Add(go);
 
+	go->AddComponent<TextureComponent>();
+	TextureComponent& textureComponent = *go->GetComponent<TextureComponent>();
+	textureComponent.SetTexture("logo.png");
+	textureComponent.SetPosition(216, 180);
+
+	go->AddComponent<RenderComponent>();
+
+	scene.Add(go);
+	//**********
+
+
+	//********** TITLE
 	auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 36);
 	go = std::make_shared<GameObject>();
+
 	go->AddComponent<TextComponent>("Programming 4 Assignment", font);
 	go->GetComponent<TextComponent>()->SetPosition(80, 20);
 	go->AddComponent<RenderComponent>();
-	scene.Add(go);
 
+	scene.Add(go);
+	//**********
+
+
+	//********** FPS counter
 	auto font2 = ResourceManager::GetInstance().LoadFont("Lingua.otf", 18);
 	go = std::make_shared<GameObject>();
+
 	go->AddComponent<FpsComponent>();
-	go->AddComponent<TextComponent>("60 FPS", font2);
-	go->GetComponent<TextComponent>()->SetPosition(10, 10);
-	go->GetComponent<TextComponent>()->SetColor(255, 255, 0);
+
+	go->AddComponent<TextComponent>("0 FPS", font2);
+	TextComponent& textComponent = *go->GetComponent<TextComponent>();
+	textComponent.SetPosition(10, 10);
+	textComponent.SetColor(255, 255, 0);
+
 	go->AddComponent<RenderComponent>();
+
 	scene.Add(go);
+	//**********
 }
 
 void dae::Minigin::Cleanup()
